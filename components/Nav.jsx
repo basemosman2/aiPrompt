@@ -4,14 +4,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
+import {usePathname, useRouter} from "next/navigation"
 
 
 const Nav = () => {
 
   const {data : session} = useSession();
-
+  const pathName = usePathname();
+  const router = useRouter();
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
+
+  const handleSignOut = ()=> {
+    if(pathName === "/profile") router.push("/");
+    signOut();
+  }
 
   useEffect(() => {
     (async () => {
@@ -19,9 +26,7 @@ const Nav = () => {
       setProviders(res);
     })();
   }, []);
-
-  console.log(session)
-
+  
   return (
     <nav className=' flex-between w-full mb-16 pt-3'>
         <Link href='/' className='flex gap-2 flex-center'>
@@ -44,7 +49,7 @@ const Nav = () => {
               Create Post
             </Link>
 
-            <button type='button' onClick={signOut} className='outline_btn'>
+            <button type='button' onClick={handleSignOut} className='outline_btn'>
               Sign Out
             </button>
 
@@ -108,7 +113,7 @@ const Nav = () => {
                   type='button'
                   onClick={() => {
                     setToggleDropdown(false);
-                    signOut();
+                    handleSignOut();
                   }}
                   className='mt-5 w-full black_btn'
                 >
